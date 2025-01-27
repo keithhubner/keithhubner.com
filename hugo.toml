@@ -1,0 +1,42 @@
+baseURL = "https://www.keithhubner.com/"
+title = "Keith Hubner"
+theme = "PaperMod"
+
+[params]
+  # Add theme-specific settings here
+  author = "Keith Hubner"
+  showDate = true
+  favicon = "favicon.ico"
+  disableRSS = false
+  disableSitemap = false
+  ShowCodeCopyButtons = true
+  enableTOC = true
+  contactLinks = [
+    { name = "Email", url = "mailto:yourname@example.com" },
+    { name = "LinkedIn", url = "https://linkedin.com/in/yourprofile" },
+    { name = "GitHub", url = "https://github.com/yourusername" }
+  ]
+
+  paginate = 10  # Number of posts per page
+  paginatePath = "page"  # Path for paginated pages
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "About Me"
+    url = "/about/"
+    weight = 2
+
+  [[menu.main]]
+    name = "Contact"
+    url = "/contact/"
+    weight = 3
+
+  [[menu.main]]
+    name = "Blog"
+    url = "/posts/"
+    weight = 2 
