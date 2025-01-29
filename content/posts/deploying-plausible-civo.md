@@ -1,8 +1,15 @@
-
+---
+title: "Deploying Plausible to Civo NEW"
+date: 2025-01-22
+draft: false
+tags: ["Civo", "Kubernetes"]
+---
 
 Create Cluster:
 
-> You can specify a name for the cluster after the create command or leave this blank and one will be generated for you:
+> You can specify a name for the cluster after the create command or leave this blank and one will be generated for you.
+
+> Please amend the node number and size to suit your requirements.
 
 ```bash
 civo k8s create my-cluster --nodes=3 --size=g4s.kube.medium --wait --save --merge
