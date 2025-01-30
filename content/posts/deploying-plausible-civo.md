@@ -1,9 +1,24 @@
 ---
-title: "Deploying Plausible to Civo NEW"
+title: "Deploying Plausible to Civo Kubernetes"
 date: 2025-01-22
 draft: false
 tags: ["Civo", "Kubernetes"]
 ---
+
+In this guide, we will walk you through the process of deploying Plausible Analytics to a Civo Kubernetes cluster. Plausible Analytics is a lightweight and open-source web analytics tool that prioritizes privacy and simplicity. By the end of this tutorial, you will have a fully functional Plausible Analytics instance running on your Civo Kubernetes cluster.
+
+## Prerequisites
+
+Before you begin, ensure you have the following setup:
+
+1. **Civo Account**: A [Civo account](https://www.civo.com/signup) with access to create Kubernetes clusters.
+2. **Civo CLI**: The [Civo CLI](https://www.civo.com/docs/cli) installed and configured on your local machine.
+3. **kubectl**: The [Kubernetes command-line tool](https://kubernetes.io/docs/tasks/tools/) installed and configured to interact with your cluster.
+4. **Helm**: The [Helm package manager](https://helm.sh/docs/intro/install/) installed on your local machine.
+5. **Domain Name**: A domain name that you can use for your Plausible Analytics instance.
+6. **Email Address**: An email address to use for Let's Encrypt SSL certificates.
+
+With these prerequisites in place, you are ready to proceed with the deployment.
 
 Create Cluster:
 
