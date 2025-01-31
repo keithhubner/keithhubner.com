@@ -22,5 +22,4 @@
 &lt;li>Open-source contributions.&lt;/li>
 &lt;li>Gaming and retro-inspired design.&lt;/li>
 &lt;/ul>
-&lt;p>Feel free to browse my projects and reach out!&lt;/p></description></item><item><title/><link>https://keithhubner.github.io/keithhubner.com/posts/deploying-plausible-to-civo-k8s/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://keithhubner.github.io/keithhubner.com/posts/deploying-plausible-to-civo-k8s/</guid><description>&lt;p>In this blog post, we will explore how to deploy Plausible Analytics to a Civo Kubernetes cluster. Plausible is a lightweight and open-source web analytics tool that prioritizes privacy and simplicity. It provides website owners with essential insights without compromising user privacy.&lt;/p>
-&lt;p>Civo is a cloud service provider that offers a developer-friendly Kubernetes platform. With its fast and efficient Kubernetes clusters, Civo makes it easy to deploy and manage containerized applications.&lt;/p></description></item></channel></rss>
+&lt;p>Feel free to browse my projects and reach out!&lt;/p></description></item></channel></rss>
