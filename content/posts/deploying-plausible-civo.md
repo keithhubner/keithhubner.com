@@ -29,7 +29,7 @@ Before we begin, ensure you have the following set up:
 To create a cluster, run the following command:
 
 ```bash
-civo k8s create plausible-cluster --nodes=3 --size=g4s.kube.medium --wait --save --merge
+civo k8s create plausible-cluster --nodes=3 --size=g4s.kube.medium --applications "cert-manager, metrics-server,traefik2-nodeport" --wait --save --merge
 ```
 
 🔹 **Explanation:**
