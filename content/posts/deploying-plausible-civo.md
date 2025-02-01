@@ -62,6 +62,9 @@ kubectl get namespaces
 ## 🔒 Step 3: Set Up Secrets and ConfigMap
 
 ### 🔐 Securely Store Database Credentials
+
+Create a `plausible-secrets.yaml` file with the contents below, replacing `secure-random-password` with a secure, random password:
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -74,11 +77,17 @@ stringData:
   POSTGRES_PASSWORD: secure-random-password
   POSTGRES_DB: plausible_db
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f plausible-secrets.yaml
 ```
 
 ### 📝 Configure Plausible Settings
+
+Create a `plausible-configmap.yaml` file with the contents below, replacing `YOUR_DOMAIN` with your domain name, and `GENERATED_KEY` with a random string (you can use the command `openssl rand -base64 48` to generate one):
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -90,6 +99,9 @@ data:
   SECRET_KEY_BASE: "GENERATED_KEY"
   CLICKHOUSE_DATABASE_URL: "http://plausible-clickhouse:8123/plausible_events_db"
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f plausible-configmap.yaml
 ```
@@ -97,6 +109,8 @@ kubectl apply -f plausible-configmap.yaml
 ---
 
 ## 🏅 Step 4: Configure Let's Encrypt Issuers
+
+Create an `issuer.yaml` file, replacing `your-email@example.com` with a legitimate email address.
 
 ```yaml
 apiVersion: cert-manager.io/v1
@@ -129,6 +143,9 @@ spec:
         ingress:
           class: traefik
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f issuer.yaml
 ```
@@ -136,6 +153,8 @@ kubectl apply -f issuer.yaml
 ---
 
 ## 🌍 Step 5: Deploy Ingress for External Access
+
+Create `plausible-ingress.yaml` with the contents below, replacing `YOUR_DOMAIN` with your actual domain name.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -163,11 +182,15 @@ spec:
     - YOUR_DOMAIN
     secretName: plausible-tls
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f plausible-ingress.yaml
 ```
 
-🔹 **After confirming DNS setup, switch to production issuer:**
+🔹 **Create the DNS record for the ingress above. After confirming DNS setup, switch to production issuer:**
+
 ```bash
 kubectl patch ingress plausible-ingress -n plausible --type='json' -p='[{"op": "replace", "path": "/metadata/annotations/cert-manager.io~1cluster-issuer", "value": "letsencrypt-production"}]'
 ```
@@ -177,6 +200,9 @@ kubectl patch ingress plausible-ingress -n plausible --type='json' -p='[{"op": "
 ## 🛠️ Step 6: Deploy PostgreSQL, ClickHouse, and Plausible
 
 ### 🐘 Deploy PostgreSQL
+
+Create `postgres-deployment.yaml` with:
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -194,11 +220,17 @@ spec:
         - secretRef:
             name: plausible-config
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f postgres-deployment.yaml
 ```
 
 ### 📊 Deploy ClickHouse
+
+Create `clickhouse-deployment.yaml` with:
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -213,11 +245,17 @@ spec:
       - name: clickhouse
         image: clickhouse/clickhouse-server:24.3.3.102-alpine
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f clickhouse-deployment.yaml
 ```
 
 ### 📈 Deploy Plausible
+
+Create `plausible-deployment.yaml`
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -235,6 +273,9 @@ spec:
         - secretRef:
             name: plausible-config
 ```
+
+Apply with:
+
 ```bash
 kubectl apply -f plausible-deployment.yaml
 ```
