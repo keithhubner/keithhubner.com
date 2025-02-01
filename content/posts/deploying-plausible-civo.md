@@ -86,7 +86,7 @@ kubectl apply -f plausible-secrets.yaml
 
 ### 📝 Configure Plausible Settings
 
-Create a `plausible-configmap.yaml` file with the contents below, replacing `YOUR_DOMAIN` with your domain name, and `GENERATED_KEY` with a random string (you can use the command `openssl rand -base64 48` to generate one):
+Create a `plausible-configmap.yaml` file with the contents below, replacing `YOUR_DOMAIN` with your domain name, and `GENERATED_KEY` with a random string at least 32 bytes long (you can use the command `openssl rand -base64 48` to generate one):
 
 ```yaml
 apiVersion: v1
@@ -219,9 +219,17 @@ kind: Deployment
 metadata:
   name: plausible-postgresql
   namespace: plausible
+  labels:
+    app: plausible-postgresql
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: plausible-postgresql
   template:
+    metadata: 
+      labels:
+        app: plausible-postgresql
     spec:
       containers:
       - name: postgresql
@@ -229,6 +237,19 @@ spec:
         envFrom:
         - secretRef:
             name: plausible-config
+        - configMapRef:
+            name: plausible-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plausible-postgresql
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: plausible-postgresql
+  clusterIP: None
 ```
 
 Apply with:
@@ -247,13 +268,32 @@ kind: Deployment
 metadata:
   name: plausible-clickhouse
   namespace: plausible
+  labels:
+    app: plausible-clickhouse
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: plausible-clickhouse
   template:
+    metadata: 
+      labels:
+        app: plausible-clickhouse
     spec:
       containers:
       - name: clickhouse
         image: clickhouse/clickhouse-server:24.3.3.102-alpine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plausible-clickhouse
+spec:
+  ports:
+    - port: 9000
+  selector:
+    app: plausible-clickhouse
+  clusterIP: None
 ```
 
 Apply with:
@@ -272,9 +312,17 @@ kind: Deployment
 metadata:
   name: plausible
   namespace: plausible
+  labels:
+    app: plausible
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: plausible
   template:
+    metadata: 
+      labels:
+        app: plausible
     spec:
       containers:
       - name: plausible
@@ -282,6 +330,19 @@ spec:
         envFrom:
         - secretRef:
             name: plausible-config
+        - configMapRef:
+            name: plausible-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plausible
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: plausible
+  clusterIP: None
 ```
 
 Apply with:
