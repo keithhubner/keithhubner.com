@@ -154,7 +154,13 @@ kubectl apply -f issuer.yaml
 
 ## 🌍 Step 5: Deploy Ingress for External Access
 
-Create `plausible-ingress.yaml` with the contents below, replacing `YOUR_DOMAIN` with your actual domain name.
+Get your cluster's external IP address:
+
+`civo k3s show plausible-cluster | grep External`
+
+Wth the external IP, create a DNS record pointing to your cluster.
+
+Now with the DNS set, create `plausible-ingress.yaml` with the contents below, replacing `YOUR_DOMAIN` with the actual domain name that you set above.
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -189,7 +195,11 @@ Apply with:
 kubectl apply -f plausible-ingress.yaml
 ```
 
-🔹 **Create the DNS record for the ingress above. After confirming DNS setup, switch to production issuer:**
+Make sure the staging certificate is created correctly.  
+- Using `kubectl get cert -n plausible plausible-tls` should show Ready = True within a few minutes
+- Use `curl -kv https://your_domain.com` to get details of the connection. It should be a certificate signed by the "Let's Encrypt; CN=(STAGING) Counterfeit Cashew R10" issuer.
+
+If those pass, you may patch the ingress to use the production issuer.
 
 ```bash
 kubectl patch ingress plausible-ingress -n plausible --type='json' -p='[{"op": "replace", "path": "/metadata/annotations/cert-manager.io~1cluster-issuer", "value": "letsencrypt-production"}]'
