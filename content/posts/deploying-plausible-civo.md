@@ -76,6 +76,8 @@ stringData:
   POSTGRES_USER: plausible
   POSTGRES_PASSWORD: secure-random-password
   POSTGRES_DB: plausible_db
+  # Match values from above
+  DATABASE_URL: postgres://plausible:secure-random-password@plausible-postgresql:5432/plausible_db
 ```
 
 Apply with:
