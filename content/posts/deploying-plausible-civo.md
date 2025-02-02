@@ -246,6 +246,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: plausible-postgresql
+  namespace: plausible
 spec:
   ports:
     - port: 5432
@@ -290,6 +291,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: plausible-clickhouse
+  namespace: plausible
 spec:
   ports:
     - port: 9000
@@ -339,6 +341,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: plausible
+  namespace: plausible
 spec:
   ports:
     - port: 80
