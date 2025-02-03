@@ -75,7 +75,7 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: your-email@example.com
+    email: keith@hubner.co.uk
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-key
@@ -90,16 +90,15 @@ metadata:
   name: letsencrypt-production
 spec:
   acme:
-    # Change this to your email address
-    email: your-email@example.com
+    email: keith@hubner.co.uk
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      # Secret used to store the account's private key
       name: letsencrypt-production-key
     solvers:
     - http01:
         ingress:
           class: traefik
+
           
 ```
 
@@ -124,6 +123,7 @@ As you can see below, some examples are given, you will need to replace these wi
 
 ```yaml
 
+
 apiVersion: v1
 kind: Secret
 metadata:
@@ -135,6 +135,7 @@ data:
   POSTGRES_PASSWORD: cGxhdXNpYmxlX3Bhc3N3b3Jk # base64 of "plausible_password"
   POSTGRES_DB: cGxhdXNpYmxlX2Ri # base64 of "plausible_db"
   DATABASE_URL: cG9zdGdyZXM6Ly9wbGF1c2libGU6cGxhdXNpYmxlX3Bhc3N3b3JkQHBsYXVzaWJsZS1wb3N0Z3Jlc3FsOjU0MzIvcGxhdXNpYmxlX2Ri # base64 of "postgres://plausible:plausible_password@plausible-postgres:5432/plausible_db"
+
 ```
 
 ### ConfigMap
@@ -146,20 +147,21 @@ openssl rand -base64 48
 ```
 Use the generated value and your domain value below:
 ```yaml
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: plausible-configmap
   namespace: plausible
 data:
-  BASE_URL: "https://YOUR_DOMAIN"
-  SECRET_KEY_BASE: "GENERATED KEY"
+  BASE_URL: "https://plausible.yourdomain.com"
+  SECRET_KEY_BASE: "bUxqWWdaSmQ3cjdkQXpqdmpTTE5CMldIZ1pXWlNZc2ZBU3dxRFpnV3o1UWpOUk9MS2hUR2F1U1Q1RUVKRjFScQo="
   CLICKHOUSE_DATABASE_URL: "http://plausible-clickhouse:8123/plausible_events_db"
 
 ```
 ### Creating PVCs
 ```yaml
+
+
 
 
 apiVersion: v1
@@ -231,7 +233,7 @@ spec:
               name: plausible-config
               key: POSTGRES_DB
         - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata # Use a subdirectory for PostgreSQL data
+          value: /var/lib/postgresql/data/pgdata
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: postgres-data
@@ -239,6 +241,7 @@ spec:
       - name: postgres-data
         persistentVolumeClaim:
           claimName: postgres-pvc
+
 
 ```
 ### Clickhouse deployment
@@ -275,6 +278,7 @@ spec:
         persistentVolumeClaim:
           claimName: clickhouse-pvc
 
+
 ```
 ### Simple Mail Server
 
@@ -299,6 +303,7 @@ spec:
         image: bytemark/smtp
         ports:
         - containerPort: 25
+
 
 ```
 ### The Plausible Application Deployment
@@ -335,6 +340,7 @@ spec:
             name: plausible-config
         - configMapRef:
             name: plausible-configmap
+
 
 ```
 ### Services for Postgres, Clickhouse, Plausible and Mail
@@ -391,6 +397,7 @@ spec:
   selector:
     app: plausible
 
+
 ```
 ### Ingress
 
@@ -404,12 +411,14 @@ metadata:
   name: plausible-ingress
   namespace: plausible
   annotations:
-    # cert-manager.io/cluster-issuer: letsencrypt-production
     cert-manager.io/cluster-issuer: letsencrypt-staging
-    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-scheme: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    traefik.ingress.kubernetes.io/entrypoints: websecure
+    traefik.ingress.kubernetes.io/service-https: "true"
 spec:
   rules:
-  - host: YOUR_DOMAIN
+  - host: plausible.yourdomain.com
     http:
       paths:
       - path: /
@@ -421,7 +430,7 @@ spec:
               number: 80
   tls:
   - hosts:
-    - YOUR_DOMAIN
+    - plausible.yourdomain.com
     secretName: plausible-tls
 
 ```
