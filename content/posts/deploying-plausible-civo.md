@@ -97,9 +97,7 @@ spec:
     solvers:
     - http01:
         ingress:
-          class: traefik
-
-          
+          class: traefik          
 ```
 
 ```bash
@@ -122,8 +120,6 @@ metadata:
 As you can see below, some examples are given, you will need to replace these with your own values. Ensure these are base64 encoded.
 
 ```yaml
-
-
 apiVersion: v1
 kind: Secret
 metadata:
@@ -156,14 +152,9 @@ data:
   BASE_URL: "https://plausible.yourdomain.com"
   SECRET_KEY_BASE: "bUxqWWdaSmQ3cjdkQXpqdmpTTE5CMldIZ1pXWlNZc2ZBU3dxRFpnV3o1UWpOUk9MS2hUR2F1U1Q1RUVKRjFScQo="
   CLICKHOUSE_DATABASE_URL: "http://plausible-clickhouse:8123/plausible_events_db"
-
 ```
 ### Creating PVCs
 ```yaml
-
-
-
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -188,7 +179,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ```
 
 ### Postgres
@@ -241,8 +231,6 @@ spec:
       - name: postgres-data
         persistentVolumeClaim:
           claimName: postgres-pvc
-
-
 ```
 ### Clickhouse deployment
 
@@ -277,8 +265,6 @@ spec:
       - name: clickhouse-data
         persistentVolumeClaim:
           claimName: clickhouse-pvc
-
-
 ```
 ### Simple Mail Server
 
@@ -303,8 +289,6 @@ spec:
         image: bytemark/smtp
         ports:
         - containerPort: 25
-
-
 ```
 ### The Plausible Application Deployment
 
@@ -340,8 +324,6 @@ spec:
             name: plausible-config
         - configMapRef:
             name: plausible-configmap
-
-
 ```
 ### Services for Postgres, Clickhouse, Plausible and Mail
 
@@ -396,15 +378,12 @@ spec:
     targetPort: 8000
   selector:
     app: plausible
-
-
 ```
 ### Ingress
 
 Lastly we can deploy the ingress. As you will see we have commented out the production issuer until the domain is ready.
 
 ```yaml
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -432,7 +411,6 @@ spec:
   - hosts:
     - plausible.yourdomain.com
     secretName: plausible-tls
-
 ```
 
 
