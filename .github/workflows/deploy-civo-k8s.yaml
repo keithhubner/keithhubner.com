@@ -72,7 +72,7 @@ jobs:
       - name: Set up kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ steps.get_secrets.outputs.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+          printf "%s" "${{ steps.get_secrets.outputs.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
 
       # 10. Deploy the application to your Civo Kubernetes cluster using the manifest in the k8s folder
       - name: Deploy to Civo Kubernetes
