@@ -57,11 +57,12 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository }}/hugo-site:latest
+      - name: Create Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          eho ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
 
       # 8. Deploy to Civo Kubernetes using the kubectl action with the kubeconfig
       - name: Deploy to Civo Kubernetes
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: apply -f k8s/deployment.yaml
+        run: |
+          kubectl apply -f k8s/deployment.yaml
