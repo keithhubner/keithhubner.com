@@ -58,7 +58,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}/hugo-site:latest
 
-      # 8. Retrieve the kubeconfig from Bitwarden
+      # 8. Retrieve the kubeconfig from Bitwarden (as a base64-encoded string)
       - name: Get Secrets from Bitwarden
         id: get_secrets
         uses: bitwarden/sm-action@v2
@@ -66,15 +66,18 @@ jobs:
           access_token: ${{ secrets.BW_ACCESS_TOKEN }}
           base_url: https://vault.bitwarden.eu
           secrets: |
-            698ad139-5f16-4533-9f3a-b27b00e511f5 > KUBECONFIG
+            698ad139-5f16-4533-9f3a-b27b00e511f5 > KUBE_CONFIG_BASE64
 
-      # 9. Set up kubeconfig for kubectl
-      - name: Set up kubeconfig
+      # 9. Decode the base64 kubeconfig and set it as an output
+      - name: Decode kubeconfig from base64
+        id: decode_kubeconfig
         run: |
-          mkdir -p $HOME/.kube
-          printf "%s" "${{ steps.get_secrets.outputs.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+          printf "kubeconfig=%s\n" "$(printf '%s' "${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}" | base64 --decode)" >> "$GITHUB_OUTPUT"
 
-      # 10. Deploy the application to your Civo Kubernetes cluster using the manifest in the k8s folder
+      # 10. Deploy to Civo Kubernetes using the kubectl action with the decoded kubeconfig
       - name: Deploy to Civo Kubernetes
-        run: |
-          kubectl apply -f k8s/deployment.yaml
+        uses: actions-hub/kubectl@v2.4.0
+        env:
+          KUBE_CONFIG: ${{ steps.decode_kubeconfig.outputs.kubeconfig }}
+        with:
+          args: apply -f k8s/deployment.yaml
