@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hugo-site
+  namespace: keithhubner-blog
 spec:
   replicas: 2
   selector:
@@ -17,11 +18,22 @@ spec:
           image: ghcr.io/keithhubner/keithhubner.com/hugo-site:latest
           ports:
             - containerPort: 80
+          env:
+            - name: HUGO_BASE_URL
+              value: "https://blog.keithhubner.com"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: hugo-site-service
+  namespace: keithhubner-blog  
 spec:
   selector:
     app: hugo-site
@@ -29,4 +41,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-  type: LoadBalancer
+  type: ClusterIP
