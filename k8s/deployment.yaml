@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hugo-site
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hugo-site
+  template:
+    metadata:
+      labels:
+        app: hugo-site
+    spec:
+      containers:
+        - name: hugo-site
+          image: ghcr.io/keithhubner/keithhubner.com/hugo-site:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hugo-site-service
+spec:
+  selector:
+    app: hugo-site
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
