@@ -19,7 +19,9 @@ jobs:
           hugo-version: 'latest'
 
       - name: Build site
-        run: hugo --minify
+        env:
+          HUGO_BASE_URL: ${{ secrets.HUGO_BASE_URL }}
+        run: hugo --minify --baseURL "$HUGO_BASE_URL"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
