@@ -72,8 +72,9 @@ jobs:
       - name: Decode kubeconfig from base64
         id: decode_kubeconfig
         run: |
-          echo "${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}" | base64 --decode > /tmp/kubeconfig.yaml
-          cat /tmp/kubeconfig.yaml | tee /github/home/.kube/config
+          mkdir -p $HOME/.kube  # Ensure the directory exists
+          echo "${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config  # Restrict permissions for security
         env:
           KUBE_CONFIG_BASE64: ${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}
 
@@ -81,6 +82,6 @@ jobs:
       - name: Deploy to Civo Kubernetes
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ steps.decode_kubeconfig.outputs.kubeconfig }}
+          KUBE_CONFIG: $HOME/.kube/config
         with:
           args: apply -f k8s/deployment.yaml
