@@ -72,7 +72,13 @@ jobs:
       - name: Decode kubeconfig from base64
         id: decode_kubeconfig
         run: |
-          printf "kubeconfig=%s\n" "$(printf '%s' "${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}" | base64 --decode)" >> "$GITHUB_OUTPUT"
+          {
+            echo "kubeconfig<<EOF"
+            echo "$(echo "$KUBE_CONFIG_BASE64" | base64 --decode)"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          KUBE_CONFIG_BASE64: ${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}
 
       # 10. Deploy to Civo Kubernetes using the kubectl action with the decoded kubeconfig
       - name: Deploy to Civo Kubernetes
