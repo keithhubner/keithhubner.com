@@ -56,7 +56,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/hugo-site:latest
+          tags: ghcr.io/${{ github.repository }}/keithhubner-blog:latest
       - name: Create Kubeconfig
         run: |
           mkdir -p $HOME/.kube

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hugo-site
+  name: keithhubner-blog
   namespace: keithhubner-blog
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: hugo-site
+      app: keithhubner-blog
   template:
     metadata:
       labels:
-        app: hugo-site
+        app: keithhubner-blog
     spec:
       containers:
-        - name: hugo-site
-          image: ghcr.io/keithhubner/keithhubner.com/hugo-site:latest
+        - name: keithhubner-blog
+          image: ghcr.io/keithhubner/keithhubner.com/keithhubner-blog:latest
           ports:
             - containerPort: 80
           env:
@@ -32,11 +32,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hugo-site-service
+  name: keithhubner-blog-service
   namespace: keithhubner-blog  
 spec:
   selector:
-    app: hugo-site
+    app: keithhubner-blog
   ports:
     - protocol: TCP
       port: 80

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keithhubner-blog-ingress
+  namespace: keithhubner-blog
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    traefik.ingress.kubernetes.io/redirect-scheme: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    traefik.ingress.kubernetes.io/entrypoints: websecure
+    traefik.ingress.kubernetes.io/service-https: "true"
+spec:
+  rules:
+  - host: blog.keithhubner.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: keithhubner-blog-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - blog.keithhubner.com
+    secretName: keithhubner-blog-tls
