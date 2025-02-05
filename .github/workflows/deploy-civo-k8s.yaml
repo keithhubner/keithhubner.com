@@ -60,7 +60,7 @@ jobs:
       - name: Create Kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          eho ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
+          echo ${{ secrets.KUBE_CONFIG }} | base64 -d > $HOME/.kube/config
 
       # 8. Deploy to Civo Kubernetes using the kubectl action with the kubeconfig
       - name: Deploy to Civo Kubernetes
