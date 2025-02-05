@@ -76,7 +76,7 @@ jobs:
 
       # 10. Deploy to Civo Kubernetes using the kubectl action with the decoded kubeconfig
       - name: Deploy to Civo Kubernetes
-        uses: actions-hub/kubectl@v2.4.0
+        uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ steps.decode_kubeconfig.outputs.kubeconfig }}
         with:
