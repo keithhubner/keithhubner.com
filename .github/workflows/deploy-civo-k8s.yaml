@@ -58,27 +58,14 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}/hugo-site:latest
 
-      # 8. Retrieve the kubeconfig from Bitwarden (as a base64-encoded string)
-      - name: Get Secrets from Bitwarden
-        id: get_secrets
-        uses: bitwarden/sm-action@v2
-        with:
-          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
-          base_url: https://vault.bitwarden.eu
-          secrets: |
-            698ad139-5f16-4533-9f3a-b27b00e511f5 > KUBE_CONFIG_BASE64
-
-      # 9. Decode the base64 kubeconfig and set it as an output
-      - name: Decode kubeconfig from base64
-        id: decode_kubeconfig
+      # 8. Set up kubeconfig from GitHub Secrets
+      - name: Set up kubeconfig
         run: |
           mkdir -p $HOME/.kube  # Ensure the directory exists
-          echo "${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}" | base64 --decode > $HOME/.kube/config
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config  # Restrict permissions for security
-        env:
-          KUBE_CONFIG_BASE64: ${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}
 
-      # 10. Deploy to Civo Kubernetes using the kubectl action with the decoded kubeconfig
+      # 9. Deploy to Civo Kubernetes using the kubectl action with the kubeconfig
       - name: Deploy to Civo Kubernetes
         uses: actions-hub/kubectl@master
         env:
