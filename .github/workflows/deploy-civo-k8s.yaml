@@ -72,11 +72,8 @@ jobs:
       - name: Decode kubeconfig from base64
         id: decode_kubeconfig
         run: |
-          {
-            echo "kubeconfig<<EOF"
-            echo "$(echo "$KUBE_CONFIG_BASE64" | base64 --decode)"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          echo "${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}" | base64 --decode > /tmp/kubeconfig.yaml
+          cat /tmp/kubeconfig.yaml | tee /github/home/.kube/config
         env:
           KUBE_CONFIG_BASE64: ${{ steps.get_secrets.outputs.KUBE_CONFIG_BASE64 }}
 
