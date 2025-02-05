@@ -58,17 +58,10 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}/hugo-site:latest
 
-      # 8. Set up kubeconfig from GitHub Secrets
-      - name: Set up kubeconfig
-        run: |
-          mkdir -p $HOME/.kube  # Ensure the directory exists
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config  # Restrict permissions for security
-
-      # 9. Deploy to Civo Kubernetes using the kubectl action with the kubeconfig
+      # 8. Deploy to Civo Kubernetes using the kubectl action with the kubeconfig
       - name: Deploy to Civo Kubernetes
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: $HOME/.kube/config
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
           args: apply -f k8s/deployment.yaml
