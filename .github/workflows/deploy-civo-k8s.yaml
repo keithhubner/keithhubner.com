@@ -66,3 +66,4 @@ jobs:
       - name: Deploy to Civo Kubernetes
         run: |
           kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/ingress.yaml
