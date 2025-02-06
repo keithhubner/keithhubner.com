@@ -171,6 +171,11 @@ data:
   DATABASE_URL: cG9zdGdyZXM6Ly9wbGF1c2libGU6cGxhdXNpYmxlX3Bhc3N3b3JkQHBsYXVzaWJsZS1wb3N0Z3Jlc3FsOjU0MzIvcGxhdXNpYmxlX2Ri # base64 of "postgres://plausible:plausible_password@plausible-postgres:5432/plausible_db"
 EOF
 ```
+Then we can apply the secret:
+
+```bash
+kubectl apply -f secret.yaml
+```
 
 ### ConfigMap
 
@@ -179,8 +184,11 @@ Next we create the config map with the relevant values, again replace with your 
 ```bash
 openssl rand -base64 48
 ```
-Use the generated value and your domain value below:
-```yaml
+
+We can then create the config map and alter the values including the generated key to use as the SECRET_KEY_BASE.
+
+```bash
+cat <<'EOF' > configMap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -190,9 +198,14 @@ data:
   BASE_URL: "https://plausible.yourdomain.com"
   SECRET_KEY_BASE: "bUxqWWdaSmQ3cjdkQXpqdmpTTE5CMldIZ1pXWlNZc2ZBU3dxRFpnV3o1UWpOUk9MS2hUR2F1U1Q1RUVKRjFScQo="
   CLICKHOUSE_DATABASE_URL: "http://plausible-clickhouse:8123/plausible_events_db"
+EOF
 ```
 ### Creating PVCs
-```yaml
+
+Plausible and the supporting applications require persistant storage, next we will create this storage. In this demo we are using postgres and clickhouse services inside the cluster, if you are deploying at scale you may wish to look at external services. 
+
+```bash
+cat <<'EOF' > pvcs.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -204,7 +217,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -217,13 +229,15 @@ spec:
   resources:
     requests:
       storage: 10Gi
+EOF
 ```
 
 ### Postgres
 
-You can of course use an external postgres database, for example a Civo managed db, but for this example we will deploy a database pod.
+As mentioned previously you can use an external postgres database, for example a [Civo managed db](https://www.civo.com/docs/database/postgresql). For the purpose of this demo, we will keep things simple and deploy postgres into the cluster.
 
-```yaml
+```bash
+cat <<'EOF' > postgres.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -269,13 +283,15 @@ spec:
       - name: postgres-data
         persistentVolumeClaim:
           claimName: postgres-pvc
+EOF
 ```
 ### Clickhouse deployment
 
 Plausible Analytics uses ClickHouse as its primary database for storing and querying analytics data. ClickHouse is a columnar database management system known for its high performance and efficiency in handling large volumes of data. It is optimized for read-heavy operations, making it ideal for real-time analytics and reporting. By leveraging ClickHouse, Plausible can provide fast and accurate insights into website traffic and user behavior, ensuring a smooth and responsive experience for its users.
 
 
-```yaml
+```bash
+cat <<'EOF' > clickhouse.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -303,8 +319,11 @@ spec:
       - name: clickhouse-data
         persistentVolumeClaim:
           claimName: clickhouse-pvc
+EOF
 ```
 ### Simple Mail Server
+
+
 
 ```yaml
 apiVersion: apps/v1
@@ -330,6 +349,7 @@ spec:
 ```
 ### The Plausible Application Deployment
 
+And finally we get to the actual deployment of Plausible:
 
 ```yaml
 apiVersion: apps/v1
