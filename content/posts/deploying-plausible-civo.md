@@ -143,9 +143,21 @@ EOF
 
 ### Secret
 
-As you can see below, some examples are given, you will need to replace these with your own values. Ensure these are base64 encoded.
+Next we will create the Kubernetes secret which will hold some values used by Plausible. As with any secret held in Kubernetes secrets, these are only base64 encoded and therefore is only really designed for simple deployments. It is worth considering an external secrets manager to provide better management of secrets, one simple and free secrets manager is [Bitwarden Secrets Manager](https://bitwarden.com/help/secrets-manager-quick-start/).
+
+Below is an example of how to create your base64 encoded values:
+
+```bash
+echo -n "plausible" | base64
+echo -n "plausible_password" | base64
+echo -n "plausible_db" | base64
+echo -n "postgres://plausible:plausible_password@plausible-postgres:5432/plausible_db" | base64
+```
+
+We can then create and update the relevant values with those generated above:
 
 ```yaml
+cat <<'EOF' > namespace.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -157,7 +169,7 @@ data:
   POSTGRES_PASSWORD: cGxhdXNpYmxlX3Bhc3N3b3Jk # base64 of "plausible_password"
   POSTGRES_DB: cGxhdXNpYmxlX2Ri # base64 of "plausible_db"
   DATABASE_URL: cG9zdGdyZXM6Ly9wbGF1c2libGU6cGxhdXNpYmxlX3Bhc3N3b3JkQHBsYXVzaWJsZS1wb3N0Z3Jlc3FsOjU0MzIvcGxhdXNpYmxlX2Ri # base64 of "postgres://plausible:plausible_password@plausible-postgres:5432/plausible_db"
-
+EOF
 ```
 
 ### ConfigMap
