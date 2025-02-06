@@ -92,7 +92,7 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: keith@hubner.co.uk
+    email: change@me.com
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-key
@@ -107,7 +107,7 @@ metadata:
   name: letsencrypt-production
 spec:
   acme:
-    email: keith@hubner.co.uk
+    email: change@me.com
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-production-key
