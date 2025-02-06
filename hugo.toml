@@ -3,7 +3,6 @@ title = "Keith Hubner"
 theme = "PaperMod"
 
 [params]
-  plausibleDomain = "blog.keithhubner.com"
   # Add theme-specific settings here
   author = "Keith Hubner"
   showDate = true
