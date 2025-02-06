@@ -36,19 +36,15 @@ civo k8s create --nodes=3 --size=g4s.kube.medium --wait --save --merge
 
 ```
 
-Create namespace
-
-```bash
-kubectl create namespace plausible
-```
-
 Verify
 
 ```bash
 kubectl get nodes
 ```
 
-Cert Manager:
+## Cert Manager
+
+Cert Manager is a Kubernetes add-on that automates the management and issuance of TLS certificates from various issuing sources. It ensures that certificates are valid and up-to-date, and it will attempt to renew certificates at an appropriate time before expiry. In this guide, we will use Cert Manager to handle the SSL certificates for our Plausible Analytics instance.
 
 ```bash
 helm repo add jetstack https://charts.jetstack.io
@@ -66,16 +62,37 @@ helm install cert-manager jetstack/cert-manager \
 kubectl get pods --namespace cert-manager
 ```
 
+## Setting Up the Project
+
+To get started, create a new folder for your project and open it in Visual Studio Code (VSCode). This will help you organize your files and make it easier to follow along with the tutorial.
+
+```bash
+mkdir civo-plausible-demo
+cd civo-plausible-demo
+code .
+```
+
+This will open the `civo-plausible-demo` folder in VSCode, where you can create and manage your Kubernetes manifests and other configuration files.
+
+## Creating k8s manifests
+
+Creating Kubernetes manifests involves defining the desired state of your Kubernetes resources using YAML files. These manifests describe various aspects of your application, such as deployments, services, config maps, secrets, and persistent volume claims (PVCs). By applying these manifests to your Kubernetes cluster, you instruct Kubernetes to create and manage the resources accordingly. In this section, we will create the necessary Kubernetes manifests to deploy Plausible Analytics and its dependencies on your Civo Kubernetes cluster.
+
+### Certificate Issuers
+
+Cert issuers are responsible for obtaining and managing SSL/TLS certificates for secure communication in your Kubernetes cluster.
+
 Issuers for staging and prod:
 
-```yaml
+```bash
+cat <<'EOF' > issuers.yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: replace@me.com
+    email: keith@hubner.co.uk
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-key
@@ -90,14 +107,15 @@ metadata:
   name: letsencrypt-production
 spec:
   acme:
-    email: replace@me.com
+    email: keith@hubner.co.uk
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-production-key
     solvers:
     - http01:
         ingress:
-          class: traefik          
+          class: traefik
+EOF       
 ```
 
 ```bash
