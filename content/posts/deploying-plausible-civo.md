@@ -157,7 +157,7 @@ echo -n "postgres://plausible:plausible_password@plausible-postgres:5432/plausib
 We can then create and update the relevant values with those generated above:
 
 ```yaml
-cat <<'EOF' > namespace.yaml
+cat <<'EOF' > secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
