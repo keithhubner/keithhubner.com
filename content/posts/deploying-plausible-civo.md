@@ -118,19 +118,27 @@ spec:
 EOF
 ```
 
+You can then edit this newly created file and update the email address used by cert manager to your own.
+
+Next we will apply this to the cluster:
+
 ```bash
 kubectl apply -f issuer.yaml
 ```
 
-## Deployment
+## Plausible Deployment
 
 ### Namespace 
 
-```yaml
+We will next create a namespace so plpausible is segregated from other applications on the cluster.
+
+```bash
+cat <<'EOF' > namespace.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
   name: plausible
+EOF
 ```
 
 ### Secret
