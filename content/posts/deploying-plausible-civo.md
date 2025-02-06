@@ -115,7 +115,7 @@ spec:
     - http01:
         ingress:
           class: traefik
-EOF       
+EOF
 ```
 
 ```bash
