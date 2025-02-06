@@ -3,6 +3,7 @@ title = "Keith Hubner"
 theme = "PaperMod"
 
 [params]
+  plausibleDomain = "blog.keithhubner.com"
   # Add theme-specific settings here
   author = "Keith Hubner"
   showDate = true
@@ -19,6 +20,9 @@ theme = "PaperMod"
 
   paginate = 10  # Number of posts per page
   paginatePath = "page"  # Path for paginated pages
+
+[params.extraHead]
+  plausible = "<script defer data-domain="blog.keithhubner.com" src="https://plausible.jankylabs.co.uk/js/script.js"></script>"
 
 [menu]
   [[menu.main]]
