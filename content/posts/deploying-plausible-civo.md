@@ -513,10 +513,16 @@ You can review the status of everything in the namespace:
 kubectl get all -n plausible
 ```
 
-Then we should be able to access and URL and setup Plausible! 
+Then we should be able to access and URL and setup Plausible!
 
+> Don't forget when you are happy the DNS is working you can update the ingress to use the production cert:
 
+```bash
+kubectl annotate ingress plausible-ingress -n plausible \
+  cert-manager.io/cluster-issuer=letsencrypt-production --overwrite
+```
 
+Hope you enjoyed wotrking through this guide! 
 
 
 
