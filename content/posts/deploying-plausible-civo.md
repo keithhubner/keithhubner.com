@@ -20,23 +20,25 @@ Before you begin, ensure you have the following setup:
 
 With these prerequisites in place, you are ready to proceed with the deployment.
 
-Create Cluster:
+## Create Cluster
 
-> You can specify a name for the cluster after the create command or leave this blank and one will be generated for you.
+We will now use the Civo CLI to create the cluster, waiting for it to provion and automatically saving and merging the KUBECONFIG. You may want to review the Civo documentation for further information.
 
-> Please amend the node number and size to suit your requirements.
+> You can specify a name for the cluster after the create command:
 
 ```bash
 civo k8s create my-cluster --nodes=3 --size=g4s.kube.medium --wait --save --merge
 
 ```
 
+Or leave this blank and one will be generated for you:
+
 ```bash
 civo k8s create --nodes=3 --size=g4s.kube.medium --wait --save --merge
 
 ```
 
-Verify
+Verify the cluster is up and running:
 
 ```bash
 kubectl get nodes
@@ -120,12 +122,6 @@ EOF
 
 You can then edit this newly created file and update the email address used by cert manager to your own.
 
-Next we will apply this to the cluster:
-
-```bash
-kubectl apply -f issuer.yaml
-```
-
 ## Plausible Deployment
 
 ### Namespace 
@@ -171,12 +167,6 @@ data:
   DATABASE_URL: cG9zdGdyZXM6Ly9wbGF1c2libGU6cGxhdXNpYmxlX3Bhc3N3b3JkQHBsYXVzaWJsZS1wb3N0Z3Jlc3FsOjU0MzIvcGxhdXNpYmxlX2Ri # base64 of "postgres://plausible:plausible_password@plausible-postgres:5432/plausible_db"
 EOF
 ```
-Then we can apply the secret:
-
-```bash
-kubectl apply -f secret.yaml
-```
-
 ### ConfigMap
 
 Next we create the config map with the relevant values, again replace with your domain etc. You will need to generate a random SECRET_KEY_BASE, which you can do by:
@@ -187,6 +177,26 @@ openssl rand -base64 48
 
 We can then create the config map and alter the values including the generated key to use as the SECRET_KEY_BASE.
 
+When deploying a cluster to Civo, you are automatically allocated a DNS record for your cluster. If you don't have a domain you can use this. 
+
+You can find this value by using the civo cli:
+
+List out your clusters:
+
+```bash
+civo k3s ls
+```
+
+Use the cluster name to find the DNS record:
+
+```bash
+civo k3s show crimson-darkness-b519665c | grep "DNS A record"
+```
+
+We can then use this, or your actual DNS record, when creating the config for Plausible:
+
+> I will be using my example value in this demo later when we create the ingress so make sure you replace this with your own.
+
 ```bash
 cat <<'EOF' > configMap.yaml
 apiVersion: v1
@@ -195,7 +205,7 @@ metadata:
   name: plausible-configmap
   namespace: plausible
 data:
-  BASE_URL: "https://plausible.yourdomain.com"
+  BASE_URL: "https://6c01f85b-7f17-4fa6-bc59-1a6c16f1576d.k8s.civo.com"
   SECRET_KEY_BASE: "bUxqWWdaSmQ3cjdkQXpqdmpTTE5CMldIZ1pXWlNZc2ZBU3dxRFpnV3o1UWpOUk9MS2hUR2F1U1Q1RUVKRjFScQo="
   CLICKHOUSE_DATABASE_URL: "http://plausible-clickhouse:8123/plausible_events_db"
 EOF
@@ -325,7 +335,8 @@ EOF
 
 
 
-```yaml
+```bash
+cat <<'EOF' > mail.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -346,12 +357,14 @@ spec:
         image: bytemark/smtp
         ports:
         - containerPort: 25
+EOF
 ```
 ### The Plausible Application Deployment
 
 And finally we get to the actual deployment of Plausible:
 
-```yaml
+```bash
+cat <<'EOF' > deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -382,10 +395,12 @@ spec:
             name: plausible-config
         - configMapRef:
             name: plausible-configmap
+EOF
 ```
 ### Services for Postgres, Clickhouse, Plausible and Mail
 
-```yaml
+```bash
+cat <<'EOF' > services.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -436,12 +451,16 @@ spec:
     targetPort: 8000
   selector:
     app: plausible
+EOF
 ```
 ### Ingress
 
 Lastly we can deploy the ingress. As you will see we have commented out the production issuer until the domain is ready.
 
-```yaml
+> As mentinoed earlier, here I am using the example DNS record for the clsuter, you will need to update this with your own.
+
+```bash
+cat <<'EOF' > ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -451,11 +470,9 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-staging
     traefik.ingress.kubernetes.io/redirect-scheme: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
-    traefik.ingress.kubernetes.io/entrypoints: websecure
-    traefik.ingress.kubernetes.io/service-https: "true"
 spec:
   rules:
-  - host: plausible.yourdomain.com
+  - host: 6c01f85b-7f17-4fa6-bc59-1a6c16f1576d.k8s.civo.com
     http:
       paths:
       - path: /
@@ -467,9 +484,41 @@ spec:
               number: 80
   tls:
   - hosts:
-    - plausible.yourdomain.com
+    - 6c01f85b-7f17-4fa6-bc59-1a6c16f1576d.k8s.civo.com
     secretName: plausible-tls
+EOF
 ```
+
+## Deploying
+
+Now we have all the files created, we can now easily deploy the application:
+
+First we need to create the namespace:
+
+```bash
+kubectl apply -f namespace.yaml
+```
+
+Then with this created all the remaining resources:
+
+```bash
+kubectl apply -f .
+```
+
+You can review the status of everything in the namespace:
+
+> Give this a few minutes, maybe make a ☕️
+
+```bash
+kubectl get all -n plausible
+```
+
+Then we should be able to access and URL and setup Plausible! 
+
+
+
+
+
 
 
 
