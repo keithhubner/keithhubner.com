@@ -126,7 +126,7 @@ You can then edit this newly created file and update the email address used by c
 
 ### Namespace 
 
-We will next create a namespace so plpausible is segregated from other applications on the cluster.
+We will next create a namespace so plausible is segregated from other applications on the cluster.
 
 ```bash
 cat <<'EOF' > namespace.yaml
@@ -135,6 +135,10 @@ kind: Namespace
 metadata:
   name: plausible
 EOF
+```
+
+```bash
+kubectl apply -f namespace.yaml
 ```
 
 ### Secret
@@ -457,7 +461,7 @@ EOF
 
 Lastly we can deploy the ingress. As you will see we have commented out the production issuer until the domain is ready.
 
-> As mentinoed earlier, here I am using the example DNS record for the clsuter, you will need to update this with your own.
+> As mentioned earlier, here I am using the example DNS record for the cluster, you will need to update this with your own.
 
 ```bash
 cat <<'EOF' > ingress.yaml
@@ -522,7 +526,7 @@ kubectl annotate ingress plausible-ingress -n plausible \
   cert-manager.io/cluster-issuer=letsencrypt-production --overwrite
 ```
 
-Hope you enjoyed wotrking through this guide! 
+Hope you enjoyed working through this guide! 
 
 
 
