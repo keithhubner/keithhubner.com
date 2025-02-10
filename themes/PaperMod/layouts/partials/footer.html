@@ -20,11 +20,11 @@
         <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
     </span>
     <p>Get in touch:</p>
-  <ul>
-    {{ range .Site.Params.contactLinks }}
-      <li><a href="{{ .url }}">{{ .name }}</a></li>
-    {{ end }}
-  </ul>
+    <ul style="display: flex; list-style: none; padding: 0; margin: 0; justify-content: center; width: 100%;">
+        {{ range .Site.Params.contactLinks }}
+            <li style="margin-right: 10px;"><a href="{{ .url }}">{{ .name }}</a></li>
+        {{ end }}
+    </ul>
 </footer>
 {{- end }}
 

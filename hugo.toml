@@ -12,9 +12,9 @@ theme = "PaperMod"
   ShowCodeCopyButtons = true
   enableTOC = true
   contactLinks = [
-    { name = "Email", url = "mailto:yourname@example.com" },
-    { name = "LinkedIn", url = "https://linkedin.com/in/yourprofile" },
-    { name = "GitHub", url = "https://github.com/yourusername" }
+    { name = "Email", url = "mailto:keith@hubner.co.uk" },
+    { name = "LinkedIn", url = "https://linkedin.com/in/keithhubner" },
+    { name = "GitHub", url = "https://github.com/keithhubner" }
   ]
 
   paginate = 10  # Number of posts per page
