@@ -2,6 +2,8 @@ baseURL = "https://keithhubner.github.io/keithhubner.com/"
 title = "Keith Hubner"
 theme = "PaperMod"
 
+ignoreLogs = ['warning-partial-superfluous-prefix']
+
 [params]
   # Add theme-specific settings here
   author = "Keith Hubner"
