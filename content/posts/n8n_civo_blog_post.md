@@ -19,7 +19,7 @@ In this guide, we'll walk through deploying n8n to a Civo Kubernetes cluster, wh
 
 Before we begin, make sure you have:
 
-- A Civo account (sign up at [civo.com](https://civo.com) if you don't have one)
+- A Civo account (sign up at [civo.com](https://civo.com) if you don't have one, you should!)
 - `kubectl` installed on your local machine
 - `civo` CLI tool installed
 - Basic familiarity with Kubernetes concepts
