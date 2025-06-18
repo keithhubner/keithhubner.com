@@ -2,7 +2,7 @@ baseURL = "https://keithhubner.github.io/keithhubner.com/"
 title = "Keith Hubner"
 theme = "PaperMod"
 
-ignoreLogs = ['warning-partial-superfluous-prefix']
+ignoreLogs = ["warning-partial-superfluous-prefix"]
 
 [params]
   # Add theme-specific settings here
@@ -41,4 +41,4 @@ ignoreLogs = ['warning-partial-superfluous-prefix']
   [[menu.main]]
     name = "Blog"
     url = "/posts/"
-    weight = 2 
+    weight = 2
